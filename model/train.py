@@ -5,13 +5,13 @@ from multi_time_series_connectedness import (
     Volatility,
     RollingConnectedness,
 )
-from market_price_movement_prediction.movement import Movement
-from market_price_movement_prediction.model_trainer import ModelTrainer
+from model.market_price_movement_prediction.movement import Movement
+from model.market_price_movement_prediction.model_trainer import ModelTrainer
 
 with open('model_config.json', 'r') as file:
     data = json.load(file)
 train_tickers = data['train_tickers']
-market_prices_dir = data['market_prices_dir']
+market_prices_dir = data['prices_train_dir']
 train_dir = data['train_dir']
 if not os.path.exists(market_prices_dir):
     os.makedirs(market_prices_dir)
