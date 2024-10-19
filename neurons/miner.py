@@ -56,6 +56,7 @@ class Miner(BaseMinerNeuron):
             self.model_config = json.load(file)
 
     def predict(self, timestamp: int):
+        return 3000
         print("scraping finance data for predicting")
         asyncio.run(scrape_and_save_data(self.model_config['train_tickers'], self.model_config['prices_predict_dir']))
 
@@ -155,6 +156,8 @@ class Miner(BaseMinerNeuron):
 
         Otherwise, allow the request to be processed further.
         """
+
+        # input when the ticker does not open market
 
         if synapse.dendrite is None or synapse.dendrite.hotkey is None:
             bt.logging.warning(
