@@ -10,7 +10,7 @@ class ETL:
         self.csv_files = list(self.file_dir.glob("*.csv"))
         self.names = [file.stem for file in self.csv_files]
         self.dict_data = {
-            name: pd.read_csv(file, index_col="time", parse_dates=["time"])
+            name: pd.read_csv(file, index_col="time", parse_dates=["time"])[['Open', 'High', 'Low', 'Close']]
             for name, file in zip(self.names, self.csv_files)
         }
         self.time_span = None
@@ -23,9 +23,8 @@ class ETL:
             union_time_index = union_time_index.union(time_column)
 
         for name, df in self.dict_data.items():
-            self.dict_data[name] = df.reindex(union_time_index).interpolate(
-                method="time"
-            )
+            self.dict_data[name] = df.reindex(union_time_index).fillna(method='ffill')
+        print(self.dict_data)
 
     def write_back_to_csv(self):
         for name, df in self.dict_data.items():
