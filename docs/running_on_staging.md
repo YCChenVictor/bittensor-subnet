@@ -220,7 +220,6 @@ Follow the below prompts:
 Register the subnet validator:
 
 ```bash
-
 btcli subnet register --wallet.name validator --wallet.hotkey default --subtensor.chain_endpoint ws://127.0.0.1:9946
 ```
 

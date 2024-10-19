@@ -1,7 +1,7 @@
 import asyncio
 import json
-from market_price_movement_prediction.scrape_finance_data_yahoo import scrape_and_save_data
-from market_price_movement_prediction.etl import ETL
+from model.market_price_movement_prediction.scrape_finance_data_yahoo import scrape_and_save_data
+from model.market_price_movement_prediction.etl import ETL
 
 with open('model_config.json', 'r') as file:
     data = json.load(file)
