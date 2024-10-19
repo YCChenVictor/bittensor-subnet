@@ -54,7 +54,7 @@ class Miner(BaseMinerNeuron):
         with open("model_config.json", "r") as file:
             self.model_config = json.load(file)
 
-    def predict(self, timestamp):
+    def predict(self, timestamp: int):
         print(timestamp)
         print("scraping finance data for predicting")
         print(self.model_config['prices_predict_dir'])

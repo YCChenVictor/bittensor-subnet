@@ -2,6 +2,13 @@ import yfinance as yf
 import pandas as pd
 import os
 import asyncio
+from datetime import timezone
+
+
+def get_unix_timestamp(datetime_str):
+    utc_time = datetime_str.astimezone(timezone.utc)
+    unix_timestamp = int(utc_time.timestamp())
+    return unix_timestamp
 
 
 def get_historical_price_with_yfinace(symbol):
@@ -10,7 +17,7 @@ def get_historical_price_with_yfinace(symbol):
         historical_prices = ticker.history(period="1d", interval="1m")
         historical_price_data = [
             {
-                **{"time": index.isoformat(), "symbol": symbol},
+                **{"time": get_unix_timestamp(index), "symbol": symbol},
                 **row[["Open", "High", "Low", "Close"]].to_dict(),
             }
             for index, row in historical_prices.iterrows()

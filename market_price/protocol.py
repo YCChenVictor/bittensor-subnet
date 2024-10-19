@@ -52,7 +52,7 @@ class MarketPriceSynapse(bt.Synapse):
     """
 
     # Required request input, filled by sending dendrite caller.
-    timestamp: str
+    timestamp: int
 
     # Optional request output, filled by receiving axon.
     prediction: typing.Optional[float] = None
