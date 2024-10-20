@@ -33,7 +33,8 @@ import market_price
 # import base miner class which takes care of most of the boilerplate
 from market_price.base.miner import BaseMinerNeuron
 
-from model.scrape_train_data import scrape_and_save_data
+from model.market_price_movement_prediction.scrape_finance_data_yahoo import scrape_and_save_data
+from model.market_price_movement_prediction.etl import ETL
 from multi_time_series_connectedness import (
     Volatility,
     RollingConnectedness,
@@ -55,22 +56,24 @@ class Miner(BaseMinerNeuron):
             self.model_config = json.load(file)
 
     def predict(self, timestamp: int):
-        print(timestamp)
         print("scraping finance data for predicting")
-        print(self.model_config['prices_predict_dir'])
         asyncio.run(scrape_and_save_data(self.model_config['train_tickers'], self.model_config['prices_predict_dir']))
+
+        print("modifying data")
+        past_roll_conn_period = self.model_config['past_roll_conn_period']
+        periods_per_volatility = self.model_config['periods_per_volatility']
+        volatilities_from = timestamp - (past_roll_conn_period+periods_per_volatility+1) * 60
+        volatilities_to = timestamp
+        etl = ETL(self.model_config['prices_predict_dir'], self.model_config['washed_prices_predict_dir'])
+        etl.transform_into_same_timestamp(volatilities_from, volatilities_to)
 
         print("calculating volatilities")
         volatility = Volatility(n=2)
-        past_roll_conn_period = self.model_config['past_roll_conn_period']
-        periods_per_volatility = self.model_config['periods_per_volatility']
         predict_dir = self.model_config['predict_dir']
         if not os.path.exists(predict_dir):
             os.makedirs(predict_dir)
-        volatilities_from = str((datetime.fromisoformat(timestamp) - timedelta(minutes=past_roll_conn_period+periods_per_volatility+1)).isoformat())
-        volatilities_to = str(datetime.fromisoformat(timestamp).isoformat())
         volatility.calculate(
-            self.model_config['prices_predict_dir'],
+            self.model_config['washed_prices_predict_dir'],
             volatilities_from,
             volatilities_to,
             f"{predict_dir}/volatilities.pickle"
@@ -78,8 +81,8 @@ class Miner(BaseMinerNeuron):
 
         print("calculate rolling connectedness")
         volatilities = pd.read_pickle(f"{predict_dir}/volatilities.pickle")
-        train_from = str((datetime.fromisoformat(timestamp) - timedelta(minutes=past_roll_conn_period)).isoformat())
-        train_to = str(datetime.fromisoformat(timestamp).isoformat())
+        train_from = timestamp - past_roll_conn_period * 60
+        train_to = timestamp
         roll_conn = RollingConnectedness(
             volatilities.dropna(),
             self.model_config['max_lag'],
