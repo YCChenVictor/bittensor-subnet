@@ -114,7 +114,8 @@ class Miner(BaseMinerNeuron):
         """
         # TODO(developer): Replace with actual implementation logic.
         timestamp = synapse.timestamp
-        synapse.prediction = self.predict(timestamp)
+        synapse.movement_prediction = self.predict(timestamp)
+        synapse.target_ticker = self.model_config["predict_ticker"]
         return synapse
 
     async def blacklist(
