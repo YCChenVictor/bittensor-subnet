@@ -44,7 +44,8 @@ async def forward(self):
         # Send the query to selected miner axons in the network.
         axons=[self.metagraph.axons[uid] for uid in miner_uids],
         # Fix timestamp now for MVP
-        synapse=MarketPriceSynapse(timestamp="2024-10-18T07:06:00+01:00"),
+        # The timestamp should be chosen wisely, because in the end of the market there is actually no more fluctuations
+        synapse=MarketPriceSynapse(timestamp=1729285200),
         # All responses have the deserialize function called on them before returning.
         # You are encouraged to define your own deserialization function.
         deserialize=True,

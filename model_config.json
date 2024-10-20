@@ -1,15 +1,16 @@
 {
     "train_tickers": ["AUDCAD=X", "AUDCHF=X", "AUDJPY=X", "AUDNZD=X", "CADCHF=X", "CADJPY=X", "CHFJPY=X"],
     "predict_ticker": "AUDCAD=X",
-    "past_roll_conn_period": 5,
-    "prices_train_dir": "model/docs/market_prices/train",
     "train_dir": "model/docs/train",
+    "raw_train_dir": "model/docs/market_prices/train",
+    "washed_train_dir": "model/docs/market_prices/washed_train",
+    "past_roll_conn_period": 5,
     "max_lag": 20,
     "periods_per_volatility": 80,
-    "volatilities_from": "2024-10-18 00:00:00+01:00",
-    "volatilities_to": "2024-10-18 15:00:00+01:00",
-    "train_from": "2024-10-18 01:22:00+01:00",
-    "train_to": "2024-10-18 15:00:00+01:00",
     "prices_predict_dir": "model/docs/market_prices/predict",
-    "predict_dir": "model/docs/predict"
+    "predict_dir": "model/docs/predict",
+    "raw_predict_dir": "model/docs/market_prices/predict",
+    "washed_predict_dir": "model/docs/market_prices/washed_predict",
+    "train_from": 1729206000,
+    "train_to": 1729284960
 }

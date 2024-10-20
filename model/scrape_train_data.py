@@ -5,16 +5,18 @@ from model.market_price_movement_prediction.etl import ETL
 
 with open('model_config.json', 'r') as file:
     data = json.load(file)
+train_dir = data['train_dir']
 tickers = data['train_tickers']
-train_data_dir = 'model/docs/market_prices/train'
-volatilities_filename = "model/docs/volatilities_train.pickle"
+raw_train_dir = data["raw_train_dir"]
+washed_train_dir = data["washed_train_dir"]
+train_from = data["train_from"]
+train_to = data["train_to"]
 
 # scrape data from training
 print("scraping finance data for training")
-asyncio.run(scrape_and_save_data(tickers, train_data_dir))
+asyncio.run(scrape_and_save_data(tickers, raw_train_dir))
 
 # Process the data
 print("modifying data")
-etl = ETL(train_data_dir)
-etl.process()
-etl.check_same_time_span()
+etl = ETL(raw_train_dir, washed_train_dir)
+etl.transform_into_same_timestamp(train_from, train_to)

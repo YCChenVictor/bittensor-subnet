@@ -191,6 +191,20 @@ template.SUBNET_LINKS
 ]
 ```
 
+
+# Usage
+
+## Miner
+
+```python
+# scrape data
+python model/scrape_train_data.py
+# train model
+python model/train.py
+```
+
+
+
 ## License
 This repository is licensed under the MIT License.
 ```text
