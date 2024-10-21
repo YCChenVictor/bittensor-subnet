@@ -55,7 +55,8 @@ class MarketPriceSynapse(bt.Synapse):
     timestamp: int
 
     # Optional request output, filled by receiving axon.
-    prediction: typing.Optional[float] = None
+    movement_prediction: typing.Optional[float] = None
+    target_ticker: typing.Optional[str] = None
 
     def deserialize(self) -> int:
         """
@@ -73,4 +74,4 @@ class MarketPriceSynapse(bt.Synapse):
         >>> dummy_instance.deserialize()
         5
         """
-        return self.prediction
+        return {"movement_prediction": self.movement_prediction, "target_ticker": self.target_ticker}

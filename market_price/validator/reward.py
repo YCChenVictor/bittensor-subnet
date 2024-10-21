@@ -19,6 +19,7 @@
 import numpy as np
 from typing import List
 import bittensor as bt
+import json
 
 
 def reward(query: int, response: int) -> float:
@@ -29,6 +30,7 @@ def reward(query: int, response: int) -> float:
     Returns:
     - float: The reward value for the miner.
     """
+    # The reward calculated by MSE
     bt.logging.info(
         f"In rewards, query val: {query}, response val: {response}, rewards val: {1.0 if response == query * 2 else 0}"
     )
@@ -50,6 +52,15 @@ def get_rewards(
     Returns:
     - np.ndarray: An array of rewards for the given query and responses.
     """
-    # Get all the reward results by iteratively calling your reward() function.
+    # set fixed ticker symbol for MVP now
+    # Also, set just one miner now
+    # With query.timestamp, query.ticker -> get the close price movement
+    # how to map the response?
+    # The responses should be list of MarketPriceSynapse
+    # add ticker to MarketPriceSynapse
+    # Gather the tickers from list of MarketPriceSynapse
+    # Use this tickers to scrape yfinance
+    # Match movements from yfinance with the prediction of those MarketPriceSynapse
+    # caclute the reward
 
     return np.array([reward(query, response) for response in responses])

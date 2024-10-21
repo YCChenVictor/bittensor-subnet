@@ -64,7 +64,7 @@ class Miner(BaseMinerNeuron):
         periods_per_volatility = self.model_config['periods_per_volatility']
         volatilities_from = timestamp - (past_roll_conn_period+periods_per_volatility+1) * 60
         volatilities_to = timestamp
-        etl = ETL(self.model_config['prices_predict_dir'], self.model_config['washed_prices_predict_dir'])
+        etl = ETL(self.model_config['prices_predict_dir'], self.model_config['washed_predict_dir'])
         etl.transform_into_same_timestamp(volatilities_from, volatilities_to)
 
         print("calculating volatilities")
@@ -73,22 +73,16 @@ class Miner(BaseMinerNeuron):
         if not os.path.exists(predict_dir):
             os.makedirs(predict_dir)
         volatility.calculate(
-            self.model_config['washed_prices_predict_dir'],
-            volatilities_from,
-            volatilities_to,
+            self.model_config['washed_predict_dir'],
             f"{predict_dir}/volatilities.pickle"
         )
 
         print("calculate rolling connectedness")
         volatilities = pd.read_pickle(f"{predict_dir}/volatilities.pickle")
-        train_from = timestamp - past_roll_conn_period * 60
-        train_to = timestamp
         roll_conn = RollingConnectedness(
             volatilities.dropna(),
             self.model_config['max_lag'],
             periods_per_volatility,
-            train_from,
-            train_to,
         )
         roll_conn.calculate(f"{predict_dir}/roll_conn.pickle")
 
@@ -120,7 +114,8 @@ class Miner(BaseMinerNeuron):
         """
         # TODO(developer): Replace with actual implementation logic.
         timestamp = synapse.timestamp
-        synapse.prediction = self.predict(timestamp)
+        synapse.movement_prediction = self.predict(timestamp)
+        synapse.target_ticker = self.model_config["predict_ticker"]
         return synapse
 
     async def blacklist(
@@ -155,6 +150,8 @@ class Miner(BaseMinerNeuron):
 
         Otherwise, allow the request to be processed further.
         """
+
+        # input when the ticker does not open market
 
         if synapse.dendrite is None or synapse.dendrite.hotkey is None:
             bt.logging.warning(
