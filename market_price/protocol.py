@@ -74,4 +74,4 @@ class MarketPriceSynapse(bt.Synapse):
         >>> dummy_instance.deserialize()
         5
         """
-        return {"movement_prediction": self.movement_prediction, "target_ticker": self.target_ticker, "timestamp": self.timestamp}
+        return {"movement_prediction": self.movement_prediction, "target_ticker": self.target_ticker}

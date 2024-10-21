@@ -57,6 +57,9 @@ async def forward(self):
         deserialize=True,
     )
 
+    # one response: {'movement_prediction': 0.00011253909906372428, 'target_ticker': 'AUDCAD=X'}
+    # here scrape the data from yfinance again and map the movement with the timestamp and ticker
+
     # Log the results for monitoring purposes.
     bt.logging.info(f"Received responses: {responses}")
 
