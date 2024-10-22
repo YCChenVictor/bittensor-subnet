@@ -19,7 +19,6 @@
 import numpy as np
 from typing import List, Dict, Union
 import bittensor as bt
-import yfinance as yf
 from model.market_price_movement_prediction.scrape_finance_data_yahoo import get_historical_price_with_yfinace
 
 
@@ -40,7 +39,9 @@ def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
     movement_prediction = response['movement_prediction']
     symbol = response['target_symbol']
     historical_price_data = get_historical_price_with_yfinace(symbol)
+    print(historical_price_data)
     result = next((item for item in historical_price_data if item['time'] == timestamp), None)
+    print(result)
     movement = result['Close'] - result['Open']
     reward = smape(movement, movement_prediction)
 

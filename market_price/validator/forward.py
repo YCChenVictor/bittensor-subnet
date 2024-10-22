@@ -38,7 +38,7 @@ async def forward(self):
     """
     # Wait for the start of the next minute. (Maybe next minute + 1 second)
     now = datetime.datetime.now()
-    wait_time = wait_time = 60 - now.second - now.microsecond / 1_000_000
+    wait_time = 65 - now.second - now.microsecond / 1_000_000
     time.sleep(wait_time)
 
     # TODO(developer): Define how the validator selects a miner to query, how often, etc.
@@ -46,6 +46,8 @@ async def forward(self):
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
 
     timestamp = int(time.time())
+    print("aaaa!!!!")
+    print(timestamp)
     # The dendrite client queries the network.
     responses = await self.dendrite(
         # Send the query to selected miner axons in the network.
