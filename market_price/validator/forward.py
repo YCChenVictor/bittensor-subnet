@@ -37,25 +37,21 @@ async def forward(self):
         self (:obj:`bittensor.neuron.Neuron`): The neuron object which contains all the necessary state for the validator.
 
     """
-    with open('model_config.json', 'r') as file:
-        data = json.load(file)
     # Wait for the start of the next minute. (Maybe next minute + 1 second)
     now = datetime.datetime.now()
-    wait_time = 60 + data['trigger_every_minute_at_second'] - now.second - now.microsecond / 1_000_000
+    wait_time = 60 + 5 - now.second - now.microsecond / 1_000_000
     time.sleep(wait_time)
 
     # TODO(developer): Define how the validator selects a miner to query, how often, etc.
     # get_random_uids is an example method, but you can replace it with your own.
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
 
-    timestamp = int(time.time())
+    target_timestamp = int(time.time()) - 5
     # The dendrite client queries the network.
     responses = await self.dendrite(
         # Send the query to selected miner axons in the network.
         axons=[self.metagraph.axons[uid] for uid in miner_uids],
-        # Fix timestamp now for MVP
-        # The timestamp should be chosen wisely, because in the end of the market there is actually no more fluctuations
-        synapse=MarketPriceSynapse(timestamp=timestamp - data['trigger_every_minute_at_second']), # timestamp=int(time.time())
+        synapse=MarketPriceSynapse(timestamp=target_timestamp),
         # All responses have the deserialize function called on them before returning.
         # You are encouraged to define your own deserialization function.
         deserialize=True,
@@ -66,7 +62,7 @@ async def forward(self):
 
     # TODO(developer): Define how the validator scores responses.
     # Adjust the scores based on responses from miners.
-    rewards = get_rewards(self, timestamp=timestamp - data['trigger_every_minute_at_second'], responses=responses)
+    rewards = get_rewards(self, timestamp=target_timestamp, responses=responses)
 
     bt.logging.info(f"Scored responses: {rewards}")
     # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.
