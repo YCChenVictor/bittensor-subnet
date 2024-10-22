@@ -35,16 +35,17 @@ def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
     - float: The reward value for the miner.
     """
     # The response: {'movement_prediction': 0.00011253909906372428, 'target_symbol': 'AUDCAD=X'}
-    # The reward calculated by MSE
     try:
         movement_prediction = response['movement_prediction']
         symbol = response['target_symbol']
         historical_price_data = get_historical_price_with_yfinace(symbol)
         result = next((item for item in historical_price_data if item['time'] == (timestamp)), None)
         movement = result['Close'] - result['Open']
-        reward = smape(movement, movement_prediction)
+        calculate_smape = smape(movement, movement_prediction)
+        normalized_sampe = calculate_smape / 200
+        reward = 1 - normalized_sampe
     except ValueError:
-        reward = 100000
+        reward = 0
 
     bt.logging.info(
         f"In rewards, timestamp val: {timestamp}, response val: {response}, reward val: {reward}"
