@@ -46,15 +46,13 @@ async def forward(self):
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
 
     timestamp = int(time.time())
-    print("aaaa!!!!")
-    print(timestamp)
     # The dendrite client queries the network.
     responses = await self.dendrite(
         # Send the query to selected miner axons in the network.
         axons=[self.metagraph.axons[uid] for uid in miner_uids],
         # Fix timestamp now for MVP
         # The timestamp should be chosen wisely, because in the end of the market there is actually no more fluctuations
-        synapse=MarketPriceSynapse(timestamp=timestamp), # timestamp=int(time.time())
+        synapse=MarketPriceSynapse(timestamp=timestamp - 5), # timestamp=int(time.time())
         # All responses have the deserialize function called on them before returning.
         # You are encouraged to define your own deserialization function.
         deserialize=True,
