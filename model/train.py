@@ -23,7 +23,7 @@ movement_filename = f"{train_dir}/movement.pickle"
 max_lag = 20
 # train_from >= volatilities_from + periods_per_volatility
 periods_per_volatility = config['periods_per_volatility']
-predict_ticker = config['predict_ticker']
+predict_symbol = config['predict_symbol']
 past_roll_conn_period = config['past_roll_conn_period']
 
 print("calculating volatilities")
@@ -45,7 +45,7 @@ roll_conn.calculate(roll_conn_filename)
 
 print("calculate movements")
 movement = Movement(
-    f"{washed_train_dir}/{predict_ticker}.csv", movement_filename
+    f"{washed_train_dir}/{predict_symbol}.csv", movement_filename
 )
 movement.get_movements("value")
 movement.store()

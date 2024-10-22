@@ -56,7 +56,7 @@ class MarketPriceSynapse(bt.Synapse):
 
     # Optional request output, filled by receiving axon.
     movement_prediction: typing.Optional[float] = None
-    target_ticker: typing.Optional[str] = None
+    target_symbol: typing.Optional[str] = None
 
     def deserialize(self) -> int:
         """
@@ -74,4 +74,4 @@ class MarketPriceSynapse(bt.Synapse):
         >>> dummy_instance.deserialize()
         5
         """
-        return {"movement_prediction": self.movement_prediction, "target_ticker": self.target_ticker}
+        return {"movement_prediction": self.movement_prediction, "target_symbol": self.target_symbol}

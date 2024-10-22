@@ -57,7 +57,7 @@ class Miner(BaseMinerNeuron):
 
     def predict(self, timestamp: int):
         print("scraping finance data for predicting")
-        asyncio.run(scrape_and_save_data(self.model_config['train_tickers'], self.model_config['prices_predict_dir']))
+        asyncio.run(scrape_and_save_data(self.model_config['train_symbols'], self.model_config['prices_predict_dir']))
 
         print("modifying data")
         past_roll_conn_period = self.model_config['past_roll_conn_period']
@@ -115,7 +115,7 @@ class Miner(BaseMinerNeuron):
         # TODO(developer): Replace with actual implementation logic.
         timestamp = synapse.timestamp
         synapse.movement_prediction = self.predict(timestamp)
-        synapse.target_ticker = self.model_config["predict_ticker"]
+        synapse.target_symbol = self.model_config["predict_symbol"]
         return synapse
 
     async def blacklist(
