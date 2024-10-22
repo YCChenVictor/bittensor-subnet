@@ -40,16 +40,14 @@ def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
         movement_prediction = response['movement_prediction']
         symbol = response['target_symbol']
         historical_price_data = get_historical_price_with_yfinace(symbol)
-        print(historical_price_data)
-        result = next((item for item in historical_price_data if item['time'] == (timestamp - 5)), None)
-        print(result)
+        result = next((item for item in historical_price_data if item['time'] == (timestamp)), None)
         movement = result['Close'] - result['Open']
         reward = smape(movement, movement_prediction)
     except ValueError:
         reward = 100000
 
     bt.logging.info(
-        f"In rewards, timestamp val: {timestamp - 5}, response val: {response}, reward val: {reward}"
+        f"In rewards, timestamp val: {timestamp}, response val: {response}, reward val: {reward}"
     )
     return reward
 

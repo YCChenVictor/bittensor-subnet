@@ -79,7 +79,6 @@ class Miner(BaseMinerNeuron):
 
         print("calculate rolling connectedness")
         volatilities = pd.read_pickle(f"{predict_dir}/volatilities.pickle")
-        print(volatilities)
         roll_conn = RollingConnectedness(
             volatilities.dropna(),
             self.model_config['max_lag'],

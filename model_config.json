@@ -12,5 +12,6 @@
     "raw_predict_dir": "model/docs/market_prices/predict",
     "washed_predict_dir": "model/docs/market_prices/washed_predict",
     "train_from": 1729206000,
-    "train_to": 1729284960
+    "train_to": 1729284960,
+    "trigger_every_minute_at_second": 5
 }
