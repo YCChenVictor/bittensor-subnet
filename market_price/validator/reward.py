@@ -17,12 +17,17 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 import numpy as np
-from typing import List
+from typing import List, Dict, Union
 import bittensor as bt
-import json
+import yfinance as yf
+from model.market_price_movement_prediction.scrape_finance_data_yahoo import get_historical_price_with_yfinace
 
 
-def reward(query: int, response: int) -> float:
+def smape(real, predicted):
+    return np.mean(np.abs(real - predicted) / ((np.abs(real) + np.abs(predicted)) / 2)) * 100
+
+
+def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
     """
     Reward the miner response to the dummy request. This method returns a reward
     value for the miner, which is used to update the miner's score.
@@ -30,17 +35,25 @@ def reward(query: int, response: int) -> float:
     Returns:
     - float: The reward value for the miner.
     """
+    # The response: {'movement_prediction': 0.00011253909906372428, 'target_symbol': 'AUDCAD=X'}
     # The reward calculated by MSE
+    movement_prediction = response['movement_prediction']
+    symbol = response['target_symbol']
+    historical_price_data = get_historical_price_with_yfinace(symbol)
+    result = next((item for item in historical_price_data if item['time'] == timestamp), None)
+    movement = result['Close'] - result['Open']
+    reward = smape(movement, movement_prediction)
+
     bt.logging.info(
-        f"In rewards, query val: {query}, response val: {response}, rewards val: {1.0 if response == query * 2 else 0}"
+        f"In rewards, timestamp val: {timestamp}, response val: {response}, reward val: {reward}"
     )
-    return 1.0 if response == query * 2 else 0
+    return reward
 
 
 def get_rewards(
     self,
-    query: int,
-    responses: List[float],
+    timestamp: int,
+    responses: List[Dict[str, Union[float, str]]],
 ) -> np.ndarray:
     """
     Returns an array of rewards for the given query and responses.
@@ -52,15 +65,5 @@ def get_rewards(
     Returns:
     - np.ndarray: An array of rewards for the given query and responses.
     """
-    # set fixed ticker symbol for MVP now
-    # Also, set just one miner now
-    # With query.timestamp, query.ticker -> get the close price movement
-    # how to map the response?
-    # The responses should be list of MarketPriceSynapse
-    # add ticker to MarketPriceSynapse
-    # Gather the tickers from list of MarketPriceSynapse
-    # Use this tickers to scrape yfinance
-    # Match movements from yfinance with the prediction of those MarketPriceSynapse
-    # caclute the reward
 
-    return np.array([reward(query, response) for response in responses])
+    return np.array([reward(timestamp, response) for response in responses])

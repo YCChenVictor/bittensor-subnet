@@ -1,6 +1,6 @@
 {
-    "train_tickers": ["AUDCAD=X", "AUDCHF=X", "AUDJPY=X", "AUDNZD=X", "CADCHF=X", "CADJPY=X", "CHFJPY=X"],
-    "predict_ticker": "AUDCAD=X",
+    "train_symbols": ["AUDCAD=X", "AUDCHF=X", "AUDJPY=X", "AUDNZD=X", "CADCHF=X", "CADJPY=X", "CHFJPY=X"],
+    "predict_symbol": "AUDCAD=X",
     "train_dir": "model/docs/train",
     "raw_train_dir": "model/docs/market_prices/train",
     "washed_train_dir": "model/docs/market_prices/washed_train",
