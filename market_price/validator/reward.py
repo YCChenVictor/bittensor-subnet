@@ -19,11 +19,16 @@
 import numpy as np
 from typing import List, Dict, Union
 import bittensor as bt
-from model.market_price_movement_prediction.scrape_finance_data_yahoo import get_historical_price_with_yfinace
+from model.market_price_movement_prediction.scrape_finance_data_yahoo import (
+    get_historical_price_with_yfinace,
+)
 
 
 def smape(real, predicted):
-    return np.mean(np.abs(real - predicted) / ((np.abs(real) + np.abs(predicted)) / 2)) * 100
+    return (
+        np.mean(np.abs(real - predicted) / ((np.abs(real) + np.abs(predicted)) / 2))
+        * 100
+    )
 
 
 def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
@@ -38,15 +43,17 @@ def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
     if not response:
         return -999
 
-    movement_prediction = response['movement_prediction']
-    symbol = response['target_symbol']
+    movement_prediction = response["movement_prediction"]
+    symbol = response["target_symbol"]
     historical_price_data = get_historical_price_with_yfinace(symbol)
-    result = next((item for item in historical_price_data if item['time'] == (timestamp)), None)
+    result = next(
+        (item for item in historical_price_data if item["time"] == (timestamp)), None
+    )
 
     if result is None:
         return 0
 
-    movement = result['Close'] - result['Open']
+    movement = result["Close"] - result["Open"]
     calculate_smape = smape(movement, movement_prediction)
     normalized_sampe = calculate_smape / 200
     reward = 1 - normalized_sampe

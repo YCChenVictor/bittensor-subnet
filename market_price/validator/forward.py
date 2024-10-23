@@ -43,7 +43,9 @@ async def forward(self):
     time.sleep(wait_time)
 
     # It should get miner uids
-    miner_uids = get_random_uids(self, k=min(self.config.neuron.sample_size, self.metagraph.n.item()))
+    miner_uids = get_random_uids(
+        self, k=min(self.config.neuron.sample_size, self.metagraph.n.item())
+    )
 
     target_timestamp = int(time.time()) - 5
     # The dendrite client queries the network.

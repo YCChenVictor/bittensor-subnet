@@ -33,7 +33,9 @@ import market_price
 # import base miner class which takes care of most of the boilerplate
 from market_price.base.miner import BaseMinerNeuron
 
-from model.market_price_movement_prediction.scrape_finance_data_yahoo import scrape_and_save_data
+from model.market_price_movement_prediction.scrape_finance_data_yahoo import (
+    scrape_and_save_data,
+)
 from model.market_price_movement_prediction.etl import ETL
 from multi_time_series_connectedness import (
     Volatility,
@@ -57,31 +59,41 @@ class Miner(BaseMinerNeuron):
 
     def predict(self, timestamp: int):
         print("scraping finance data for predicting")
-        asyncio.run(scrape_and_save_data(self.model_config['train_symbols'], self.model_config['prices_predict_dir']))
+        asyncio.run(
+            scrape_and_save_data(
+                self.model_config["train_symbols"],
+                self.model_config["prices_predict_dir"],
+            )
+        )
 
         print("modifying data")
-        past_roll_conn_period = self.model_config['past_roll_conn_period']
-        periods_per_volatility = self.model_config['periods_per_volatility']
-        volatilities_from = timestamp - (past_roll_conn_period+periods_per_volatility+1) * 60
+        past_roll_conn_period = self.model_config["past_roll_conn_period"]
+        periods_per_volatility = self.model_config["periods_per_volatility"]
+        volatilities_from = (
+            timestamp - (past_roll_conn_period + periods_per_volatility + 1) * 60
+        )
         volatilities_to = timestamp
-        etl = ETL(self.model_config['prices_predict_dir'], self.model_config['washed_predict_dir'])
+        etl = ETL(
+            self.model_config["prices_predict_dir"],
+            self.model_config["washed_predict_dir"],
+        )
         etl.transform_into_same_timestamp(volatilities_from, volatilities_to)
 
         print("calculating volatilities")
         volatility = Volatility(n=2)
-        predict_dir = self.model_config['predict_dir']
+        predict_dir = self.model_config["predict_dir"]
         if not os.path.exists(predict_dir):
             os.makedirs(predict_dir)
         volatility.calculate(
-            self.model_config['washed_predict_dir'],
-            f"{predict_dir}/volatilities.pickle"
+            self.model_config["washed_predict_dir"],
+            f"{predict_dir}/volatilities.pickle",
         )
 
         print("calculate rolling connectedness")
         volatilities = pd.read_pickle(f"{predict_dir}/volatilities.pickle")
         roll_conn = RollingConnectedness(
             volatilities.dropna(),
-            self.model_config['max_lag'],
+            self.model_config["max_lag"],
             periods_per_volatility,
         )
         roll_conn.calculate(f"{predict_dir}/roll_conn.pickle")
@@ -89,7 +101,12 @@ class Miner(BaseMinerNeuron):
         print("predict movements")
         with open(f"{predict_dir}/roll_conn.pickle", "rb") as f:
             predict_roll_conn = pd.read_pickle(f)
-        columns_to_remove = ["start_at", "end_at", "forecast_at_next_period", "forecast_at"]
+        columns_to_remove = [
+            "start_at",
+            "end_at",
+            "forecast_at_next_period",
+            "forecast_at",
+        ]
         input_data = predict_roll_conn.drop(columns=columns_to_remove).values
         input_data = np.expand_dims(input_data, axis=0)
         model = tf.keras.models.load_model("trained_model.keras")
@@ -154,9 +171,7 @@ class Miner(BaseMinerNeuron):
         # input when the ticker does not open market
 
         if synapse.dendrite is None or synapse.dendrite.hotkey is None:
-            bt.logging.warning(
-                "Received a request without a dendrite or hotkey."
-            )
+            bt.logging.warning("Received a request without a dendrite or hotkey.")
             return True, "Missing dendrite or hotkey"
 
         # TODO(developer): Define how miners should blacklist requests.
@@ -184,7 +199,9 @@ class Miner(BaseMinerNeuron):
         )
         return False, "Hotkey recognized!"
 
-    async def priority(self, synapse: market_price.protocol.MarketPriceSynapse) -> float:
+    async def priority(
+        self, synapse: market_price.protocol.MarketPriceSynapse
+    ) -> float:
         """
         The priority function determines the order in which requests are handled. More valuable or higher-priority
         requests are processed before others. You should design your own priority mechanism with care.
@@ -205,9 +222,7 @@ class Miner(BaseMinerNeuron):
         - A higher stake results in a higher priority value.
         """
         if synapse.dendrite is None or synapse.dendrite.hotkey is None:
-            bt.logging.warning(
-                "Received a request without a dendrite or hotkey."
-            )
+            bt.logging.warning("Received a request without a dendrite or hotkey.")
             return 0.0
 
         # TODO(developer): Define how miners should prioritize requests.

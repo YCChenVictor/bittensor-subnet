@@ -12,7 +12,7 @@ class ModelTrainer:
         self.features = features
         self.store_model_path = store_model_path
         self.match_target_features = None
-        with open('model_config.json', 'r') as file:
+        with open("model_config.json", "r") as file:
             self.model_config = json.load(file)
 
     def match(self):
@@ -50,12 +50,17 @@ class ModelTrainer:
         X_train = np.array(X_train)
         Y_train = np.array(Y_train)
         model = Sequential()
-        model.add(LSTM(self.model_config['lstm_num_neurons'], input_shape=X_train[0].shape))
-        model.add(Dense(1, activation="sigmoid"))
-        model.compile(
-            optimizer="adam", loss="mean_squared_error", metrics=["accuracy"]
+        model.add(
+            LSTM(self.model_config["lstm_num_neurons"], input_shape=X_train[0].shape)
         )
-        model.fit(X_train, Y_train, epochs=self.model_config['epochs'], batch_size=self.model_config['batch_size'])
+        model.add(Dense(1, activation="sigmoid"))
+        model.compile(optimizer="adam", loss="mean_squared_error", metrics=["accuracy"])
+        model.fit(
+            X_train,
+            Y_train,
+            epochs=self.model_config["epochs"],
+            batch_size=self.model_config["batch_size"],
+        )
 
         model_path = self.store_model_path
         model.save(model_path)

@@ -1,12 +1,14 @@
 import asyncio
 import json
-from model.market_price_movement_prediction.scrape_finance_data_yahoo import scrape_and_save_data
+from model.market_price_movement_prediction.scrape_finance_data_yahoo import (
+    scrape_and_save_data,
+)
 from model.market_price_movement_prediction.etl import ETL
 
-with open('model_config.json', 'r') as file:
+with open("model_config.json", "r") as file:
     data = json.load(file)
-train_dir = data['train_dir']
-tickers = data['train_symbols']
+train_dir = data["train_dir"]
+tickers = data["train_symbols"]
 raw_train_dir = data["raw_train_dir"]
 washed_train_dir = data["washed_train_dir"]
 train_from = data["train_from"]

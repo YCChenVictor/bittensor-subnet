@@ -25,9 +25,7 @@ from .logging import setup_events_logger
 
 def is_cuda_available():
     try:
-        output = subprocess.check_output(
-            ["nvidia-smi", "-L"], stderr=subprocess.STDOUT
-        )
+        output = subprocess.check_output(["nvidia-smi", "-L"], stderr=subprocess.STDOUT)
         if "NVIDIA" in output.decode("utf-8"):
             return "cuda"
     except Exception:
