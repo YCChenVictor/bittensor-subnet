@@ -74,4 +74,7 @@ class MarketPriceSynapse(bt.Synapse):
         >>> dummy_instance.deserialize()
         5
         """
-        return {"movement_prediction": self.movement_prediction, "target_symbol": self.target_symbol}
+        if self.movement_prediction is not None and self.target_symbol is not None:
+            return {"movement_prediction": self.movement_prediction, "target_symbol": self.target_symbol}
+        else:
+            return False

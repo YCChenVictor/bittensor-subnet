@@ -42,9 +42,8 @@ async def forward(self):
     wait_time = 60 + 5 - now.second - now.microsecond / 1_000_000
     time.sleep(wait_time)
 
-    # TODO(developer): Define how the validator selects a miner to query, how often, etc.
-    # get_random_uids is an example method, but you can replace it with your own.
-    miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
+    # It should get miner uids
+    miner_uids = get_random_uids(self, k=min(self.config.neuron.sample_size, self.metagraph.n.item()))
 
     target_timestamp = int(time.time()) - 5
     # The dendrite client queries the network.
@@ -63,6 +62,8 @@ async def forward(self):
     # TODO(developer): Define how the validator scores responses.
     # Adjust the scores based on responses from miners.
     rewards = get_rewards(self, timestamp=target_timestamp, responses=responses)
+
+    # Still did not resolve the non miner issue, the forward will request result on all uids in the current neuron
 
     bt.logging.info(f"Scored responses: {rewards}")
     # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.

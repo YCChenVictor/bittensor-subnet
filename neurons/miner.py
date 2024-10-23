@@ -222,6 +222,9 @@ class Miner(BaseMinerNeuron):
         )
         return priority
 
+    def save_state(self):
+        pass
+
 
 # This is the main function, which runs the miner.
 if __name__ == "__main__":
