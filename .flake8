@@ -1,2 +1,4 @@
 [flake8]
-exclude = .venv
+max-line-length = 88
+exclude = .venv, docs
+ignore = E203, W503

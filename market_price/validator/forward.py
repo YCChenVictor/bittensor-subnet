@@ -3,21 +3,23 @@
 # TODO(developer): Set your name
 # Copyright © 2023 <your name>
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-# documentation files (the “Software”), to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the “Software”), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to the following
+# conditions:
 
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-# the Software.
+# The above copyright notice and this permission notice shall be included in all copies
+# or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+# CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-import json
 import time
 import datetime
 import bittensor as bt
@@ -34,8 +36,8 @@ async def forward(self):
     It is responsible for querying the network and scoring the responses.
 
     Args:
-        self (:obj:`bittensor.neuron.Neuron`): The neuron object which contains all the necessary state for the validator.
-
+        self (:obj:`bittensor.neuron.Neuron`): The neuron object which contains all the
+        necessary state for the validator.
     """
     # Wait for the start of the next minute. (Maybe next minute + 1 second)
     now = datetime.datetime.now()
@@ -43,7 +45,9 @@ async def forward(self):
     time.sleep(wait_time)
 
     # It should get miner uids
-    miner_uids = get_random_uids(
+    # However it actually get all the uids, including non miner uids
+    # The non miner uids should be blacklisted by the blackedlist mechanism
+    uids = get_random_uids(
         self, k=min(self.config.neuron.sample_size, self.metagraph.n.item())
     )
 
@@ -51,7 +55,7 @@ async def forward(self):
     # The dendrite client queries the network.
     responses = await self.dendrite(
         # Send the query to selected miner axons in the network.
-        axons=[self.metagraph.axons[uid] for uid in miner_uids],
+        axons=[self.metagraph.axons[uid] for uid in uids],
         synapse=MarketPriceSynapse(timestamp=target_timestamp),
         # All responses have the deserialize function called on them before returning.
         # You are encouraged to define your own deserialization function.
@@ -61,13 +65,12 @@ async def forward(self):
     # Log the results for monitoring purposes.
     bt.logging.info(f"Received responses: {responses}")
 
-    # TODO(developer): Define how the validator scores responses.
     # Adjust the scores based on responses from miners.
     rewards = get_rewards(self, timestamp=target_timestamp, responses=responses)
 
-    # Still did not resolve the non miner issue, the forward will request result on all uids in the current neuron
+    # Still did not resolve the non miner issue, the forward will request result on all
+    # uids in the current neuron
 
     bt.logging.info(f"Scored responses: {rewards}")
-    # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.
     # Let's just trust the update scores mechanism
-    self.update_scores(rewards, miner_uids)
+    self.update_scores(rewards, uids)

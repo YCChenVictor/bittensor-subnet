@@ -1,32 +1,33 @@
 # The MIT License (MIT)
 # Copyright © 2023 Yuma Rao
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-# documentation files (the “Software”), to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the “Software”), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to the following
+# conditions:
 
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-# the Software.
+# The above copyright notice and this permission notice shall be included in all copies
+# or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+# CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import time
 import asyncio
 import threading
 import argparse
 import traceback
-
 import bittensor as bt
+from typing import Union
 
 from market_price.base.neuron import BaseNeuron
 from market_price.utils.config import add_miner_args
-
-from typing import Union
 
 
 class BaseMinerNeuron(BaseNeuron):
@@ -47,20 +48,27 @@ class BaseMinerNeuron(BaseNeuron):
         # Warn if allowing incoming requests from anyone.
         if not self.config.blacklist.force_validator_permit:
             bt.logging.warning(
-                "You are allowing non-validators to send requests to your miner. This is a security risk."
+                (
+                    "You are allowing non-validators to send requests to your miner. "
+                    "This is a security risk."
+                )
             )
         if self.config.blacklist.allow_non_registered:
             bt.logging.warning(
-                "You are allowing non-registered entities to send requests to your miner. This is a security risk."
+                (
+                    "You are allowing non-registered entities to send requests to your "
+                    "miner. This is a security risk."
+                )
             )
-        # The axon handles request processing, allowing validators to send this miner requests.
+        # The axon handles request processing, allowing validators to send this miner
+        # requests.
         self.axon = bt.axon(
             wallet=self.wallet,
             config=self.config() if callable(self.config) else self.config,
         )
 
         # Attach determiners which functions are called when servicing a request.
-        bt.logging.info(f"Attaching forward function to miner axon.")
+        bt.logging.info("Attaching forward function to miner axon.")
         self.axon.attach(
             forward_fn=self.forward,
             blacklist_fn=self.blacklist,
@@ -76,25 +84,33 @@ class BaseMinerNeuron(BaseNeuron):
 
     def run(self):
         """
-        Initiates and manages the main loop for the miner on the Bittensor network. The main loop handles graceful shutdown on keyboard interrupts and logs unforeseen errors.
+        Initiates and manages the main loop for the miner on the Bittensor network. The
+        main loop handles graceful shutdown on keyboard interrupts and logs unforeseen
+        errors.
 
         This function performs the following primary tasks:
         1. Check for registration on the Bittensor network.
         2. Starts the miner's axon, making it active on the network.
-        3. Periodically resynchronizes with the chain; updating the metagraph with the latest network state and setting weights.
+        3. Periodically resynchronizes with the chain; updating the metagraph with the
+        latest network state and setting weights.
 
-        The miner continues its operations until `should_exit` is set to True or an external interruption occurs.
-        During each epoch of its operation, the miner waits for new blocks on the Bittensor network, updates its
-        knowledge of the network (metagraph), and sets its weights. This process ensures the miner remains active
-        and up-to-date with the network's latest state.
+        The miner continues its operations until `should_exit` is set to True or an
+        external interruption occurs.
+        During each epoch of its operation, the miner waits for new blocks on the
+        Bittensor network, updates its knowledge of the network (metagraph), and sets
+        its weights. This process ensures the miner remains active and up-to-date with
+        the network's latest state.
 
         Note:
-            - The function leverages the global configurations set during the initialization of the miner.
-            - The miner's axon serves as its interface to the Bittensor network, handling incoming and outgoing requests.
+            - The function leverages the global configurations set during the
+            initialization of the miner.
+            - The miner's axon serves as its interface to the Bittensor network,
+            handling incoming and outgoing requests.
 
         Raises:
             KeyboardInterrupt: If the miner is stopped by a manual interruption.
-            Exception: For unforeseen errors during the miner's operation, which are logged for diagnosis.
+            Exception: For unforeseen errors during the miner's operation, which are
+            logged for diagnosis.
         """
 
         # Check that miner is registered on the network.
@@ -103,7 +119,11 @@ class BaseMinerNeuron(BaseNeuron):
         # Serve passes the axon information to the network + netuid we are hosting on.
         # This will auto-update if the axon port of external ip have changed.
         bt.logging.info(
-            f"Serving miner axon {self.axon} on network: {self.config.subtensor.chain_endpoint} with netuid: {self.config.netuid}"
+            (
+                f"Serving miner axon {self.axon} on network: "
+                f"{self.config.subtensor.chain_endpoint} with netuid: "
+                f"{{self.config.netuid}}"
+            )
         )
         self.axon.serve(netuid=self.config.netuid, subtensor=self.subtensor)
 
@@ -136,9 +156,10 @@ class BaseMinerNeuron(BaseNeuron):
             bt.logging.success("Miner killed by keyboard interrupt.")
             exit()
 
-        # In case of unforeseen errors, the miner will log the error and continue operations.
+        # In case of unforeseen errors, the miner will log the error and continue
+        # operations.
         except Exception as e:
-            bt.logging.error(traceback.format_exc())
+            bt.logging.error(f"{traceback.format_exc()} Exception: {e}")
 
     def run_in_background_thread(self):
         """
@@ -181,7 +202,8 @@ class BaseMinerNeuron(BaseNeuron):
         Args:
             exc_type: The type of the exception that caused the context to be exited.
                       None if the context was exited without an exception.
-            exc_value: The instance of the exception that caused the context to be exited.
+            exc_value: The instance of the exception that caused the context to be
+                       exited.
                        None if the context was exited without an exception.
             traceback: A traceback object encoding the stack trace.
                        None if the context was exited without an exception.
@@ -189,7 +211,10 @@ class BaseMinerNeuron(BaseNeuron):
         self.stop_run_thread()
 
     def resync_metagraph(self):
-        """Resyncs the metagraph and updates the hotkeys and moving averages based on the new metagraph."""
+        """
+        Resyncs the metagraph and updates the hotkeys and moving averages based on the
+        new metagraph.
+        """
         # bt.logging.info("resync_metagraph()")
 
         # Sync the metagraph.

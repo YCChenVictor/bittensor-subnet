@@ -3,19 +3,22 @@
 # TODO(developer): Set your name
 # Copyright © 2023 <your name>
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-# documentation files (the “Software”), to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the “Software”), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to the following
+# conditions:
 
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-# the Software.
+# The above copyright notice and this permission notice shall be included in all copies
+# or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+# CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 import numpy as np
 from typing import List, Dict, Union
 import bittensor as bt
@@ -39,7 +42,8 @@ def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
     Returns:
     - float: The reward value for the miner.
     """
-    # The response: {'movement_prediction': 0.00011253909906372428, 'target_symbol': 'AUDCAD=X'}
+    # The response:
+    # {'movement_prediction': 0.00011253909906372428, 'target_symbol': 'AUDCAD=X'}
     if not response:
         return -999
 
@@ -58,7 +62,8 @@ def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
     normalized_sampe = calculate_smape / 200
     reward = 1 - normalized_sampe
     bt.logging.info(
-        f"In rewards, timestamp val: {timestamp}, response val: {response}, reward val: {reward}"
+        f"In rewards, timestamp val: {timestamp}, response val: {response}, "
+        f"reward val: {reward}"
     )
     return reward
 
@@ -78,5 +83,4 @@ def get_rewards(
     Returns:
     - np.ndarray: An array of rewards for the given query and responses.
     """
-    # filtered_responses = filter_responses(responses)
     return np.array([reward(timestamp, response) for response in responses])

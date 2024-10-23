@@ -2,19 +2,22 @@
 # Copyright © 2023 Yuma Rao
 # Copyright © 2023 Opentensor Foundation
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-# documentation files (the “Software”), to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the “Software”), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to the following
+# conditions:
 
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-# the Software.
+# The above copyright notice and this permission notice shall be included in all copies
+# or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+# CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import sys
 import unittest
@@ -33,8 +36,10 @@ class TemplateValidatorNeuronTestCase(unittest.TestCase):
     """
     This class contains unit tests for the RewardEvent classes.
 
-    The tests cover different scenarios where completions may or may not be successful and the reward events are checked that they don't contain missing values.
-    The `reward` attribute of all RewardEvents is expected to be a float, and the `is_filter_model` attribute is expected to be a boolean.
+    The tests cover different scenarios where completions may or may not be successful
+    and the reward events are checked that they don't contain missing values.
+    The `reward` attribute of all RewardEvents is expected to be a float, and the
+    `is_filter_model` attribute is expected to be a boolean.
     """
 
     def setUp(self):
@@ -52,7 +57,8 @@ class TemplateValidatorNeuronTestCase(unittest.TestCase):
         pass
 
     def test_sync_error_if_not_registered(self):
-        # TODO: Test that the validator throws an error if it is not registered on metagraph
+        # TODO: Test that the validator throws an error if it is not registered on
+        # metagraph
         pass
 
     def test_forward(self):
@@ -66,8 +72,9 @@ class TemplateValidatorNeuronTestCase(unittest.TestCase):
             # Send the query to miners in the network.
             axons=[self.neuron.metagraph.axons[uid] for uid in self.miner_uids],
             # Construct a dummy query.
-            synapse=Dummy(dummy_input=self.neuron.step),
-            # All responses have the deserialize function called on them before returning.
+            synapse=MarketPriceSynapse(dummy_input=self.neuron.step),
+            # All responses have the deserialize function called on them before
+            # returning.
             deserialize=True,
         )
 
@@ -80,8 +87,9 @@ class TemplateValidatorNeuronTestCase(unittest.TestCase):
             # Send the query to miners in the network.
             axons=[self.metagraph.axons[uid] for uid in self.miner_uids],
             # Construct a dummy query.
-            synapse=Dummy(dummy_input=self.neuron.step),
-            # All responses have the deserialize function called on them before returning.
+            synapse=MarketPriceSynapse(dummy_input=self.neuron.step),
+            # All responses have the deserialize function called on them before
+            # returning.
             deserialize=True,
         )
 
@@ -96,15 +104,15 @@ class TemplateValidatorNeuronTestCase(unittest.TestCase):
             # Send the query to miners in the network.
             axons=[self.metagraph.axons[uid] for uid in self.miner_uids],
             # Construct a dummy query.
-            synapse=Dummy(dummy_input=self.neuron.step),
-            # All responses have the deserialize function called on them before returning.
+            synapse=MarketPriceSynapse(dummy_input=self.neuron.step),
+            # All responses have the deserialize function called on them before
+            # returning.
             deserialize=True,
         )
 
         rewards = get_rewards(self.neuron, responses)
-        expected_rewards = rewards.clone()
         # Add NaN values to rewards
         rewards[0] = float("nan")
 
-        with self.assertLogs(bt.logging, level="WARNING") as cm:
+        with self.assertLogs(bt.logging, level="WARNING"):
             self.neuron.update_scores(rewards, self.miner_uids)

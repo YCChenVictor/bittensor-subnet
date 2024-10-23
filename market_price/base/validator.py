@@ -3,19 +3,22 @@
 # TODO(developer): Set your name
 # Copyright © 2023 <your name>
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-# documentation files (the “Software”), to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the “Software”), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to the following
+# conditions:
 
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-# the Software.
+# The above copyright notice and this permission notice shall be included in all copies
+# or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+# SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 import copy
@@ -97,7 +100,11 @@ class BaseValidatorNeuron(BaseNeuron):
                     axon=self.axon,
                 )
                 bt.logging.info(
-                    f"Running validator {self.axon} on network: {self.config.subtensor.chain_endpoint} with netuid: {self.config.netuid}"
+                    (
+                        f"Running validator {self.axon} on network: "
+                        f"{self.config.subtensor.chain_endpoint} with netuid: "
+                        f"{self.config.netuid}"
+                    )
                 )
             except Exception as e:
                 bt.logging.error(f"Failed to serve Axon with exception: {e}")
@@ -115,22 +122,31 @@ class BaseValidatorNeuron(BaseNeuron):
 
     def run(self):
         """
-        Initiates and manages the main loop for the miner on the Bittensor network. The main loop handles graceful shutdown on keyboard interrupts and logs unforeseen errors.
+        Initiates and manages the main loop for the miner on the Bittensor network. The
+        main loop handles graceful shutdown on keyboard interrupts and logs unforeseen
+        errors.
 
         This function performs the following primary tasks:
         1. Check for registration on the Bittensor network.
-        2. Continuously forwards queries to the miners on the network, rewarding their responses and updating the scores accordingly.
-        3. Periodically resynchronizes with the chain; updating the metagraph with the latest network state and setting weights.
+        2. Continuously forwards queries to the miners on the network, rewarding their
+        responses and updating the scores accordingly.
+        3. Periodically resynchronizes with the chain; updating the metagraph with the
+        latest network state and setting weights.
 
-        The essence of the validator's operations is in the forward function, which is called every step. The forward function is responsible for querying the network and scoring the responses.
+        The essence of the validator's operations is in the forward function, which is
+        called every step. The forward function is responsible for querying the network
+        and scoring the responses.
 
         Note:
-            - The function leverages the global configurations set during the initialization of the miner.
-            - The miner's axon serves as its interface to the Bittensor network, handling incoming and outgoing requests.
+            - The function leverages the global configurations set during the
+            initialization of the miner.
+            - The miner's axon serves as its interface to the Bittensor network,
+            handling incoming and outgoing requests.
 
         Raises:
             KeyboardInterrupt: If the miner is stopped by a manual interruption.
-            Exception: For unforeseen errors during the miner's operation, which are logged for diagnosis.
+            Exception: For unforeseen errors during the miner's operation, which are
+            logged for diagnosis.
         """
 
         # Check that validator is registered on the network.
@@ -155,21 +171,23 @@ class BaseValidatorNeuron(BaseNeuron):
 
                 self.step += 1
 
-        # If someone intentionally stops the validator, it'll safely terminate operations.
+        # If someone intentionally stops the validator, it'll safely terminate
+        # operations.
         except KeyboardInterrupt:
             self.axon.stop()
             bt.logging.success("Validator killed by keyboard interrupt.")
             exit()
 
-        # In case of unforeseen errors, the validator will log the error and continue operations.
+        # In case of unforeseen errors, the validator will log the error and continue
+        # operations.
         except Exception as err:
             bt.logging.error(f"Error during validation: {str(err)}")
             bt.logging.debug(str(print_exception(type(err), err, err.__traceback__)))
 
     def run_in_background_thread(self):
         """
-        Starts the validator's operations in a background thread upon entering the context.
-        This method facilitates the use of the validator in a 'with' statement.
+        Starts the validator's operations in a background thread upon entering the
+        context. This method facilitates the use of the validator in a 'with' statement.
         """
         if not self.is_running:
             bt.logging.debug("Starting validator in background thread.")
@@ -202,8 +220,8 @@ class BaseValidatorNeuron(BaseNeuron):
         Args:
             exc_type: The type of the exception that caused the context to be exited.
                       None if the context was exited without an exception.
-            exc_value: The instance of the exception that caused the context to be exited.
-                       None if the context was exited without an exception.
+            exc_value: The instance of the exception that caused the context to be
+                       exited. None if the context was exited without an exception.
             traceback: A traceback object encoding the stack trace.
                        None if the context was exited without an exception.
         """
@@ -216,13 +234,18 @@ class BaseValidatorNeuron(BaseNeuron):
 
     def set_weights(self):
         """
-        Sets the validator weights to the metagraph hotkeys based on the scores it has received from the miners. The weights determine the trust and incentive level the validator assigns to miner nodes on the network.
+        Sets the validator weights to the metagraph hotkeys based on the scores it has
+        received from the miners. The weights determine the trust and incentive level
+        the validator assigns to miner nodes on the network.
         """
 
         # Check if self.scores contains any NaN values and log a warning if it does.
         if np.isnan(self.scores).any():
             bt.logging.warning(
-                f"Scores contain NaN values. This may be due to a lack of responses from miners, or a bug in your reward functions."
+                (
+                    "Scores contain NaN values. This may be due to a lack of responses "
+                    "from miners, or a bug in your reward functions."
+                )
             )
 
         # Calculate the average reward for each uid across non-zero values.
@@ -279,7 +302,8 @@ class BaseValidatorNeuron(BaseNeuron):
             bt.logging.error("set_weights failed", msg)
 
     def resync_metagraph(self):
-        """Resyncs the metagraph and updates the hotkeys and moving averages based on the new metagraph."""
+        """Resyncs the metagraph and updates the hotkeys and moving averages based on
+        the new metagraph."""
         bt.logging.info("resync_metagraph()")
 
         # Copies state of metagraph before syncing.
@@ -313,7 +337,8 @@ class BaseValidatorNeuron(BaseNeuron):
         self.hotkeys = copy.deepcopy(self.metagraph.hotkeys)
 
     def update_scores(self, rewards: np.ndarray, uids: List[int]):
-        """Performs exponential moving average on the scores based on the rewards received from the miners."""
+        """Performs exponential moving average on the scores based on the rewards
+        received from the miners."""
 
         # Check if rewards contains NaN values.
         if np.isnan(rewards).any():

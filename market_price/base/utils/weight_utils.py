@@ -8,12 +8,16 @@ U16_MAX = 65535
 
 
 def normalize_max_weight(x: np.ndarray, limit: float = 0.1) -> np.ndarray:
-    r"""Normalizes the numpy array x so that sum(x) = 1 and the max value is not greater than the limit.
+    r"""
+    Normalizes the numpy array x so that sum(x) = 1 and the max value is not
+    greater than the limit.
+
     Args:
         x (:obj:`np.ndarray`):
             Array to be max_value normalized.
         limit: float:
             Max value after normalization.
+
     Returns:
         y (:obj:`np.ndarray`):
             Normalized x array.

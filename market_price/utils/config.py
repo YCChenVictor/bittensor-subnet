@@ -2,19 +2,22 @@
 # Copyright © 2023 Yuma Rao
 # Copyright © 2023 Opentensor Foundation
 
-# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
-# documentation files (the “Software”), to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
-# and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this
+# software and associated documentation files (the “Software”), to deal in the Software
+# without restriction, including without limitation the rights to use, copy, modify,
+# merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to the following
+# conditions:
 
-# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
-# the Software.
+# The above copyright notice and this permission notice shall be included in all copies
+# or substantial portions of the Software.
 
-# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+# INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+# PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+# CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE
+# OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import os
 import subprocess
@@ -45,7 +48,7 @@ def check_config(cls, config: "bt.Config"):
 
     full_path = os.path.expanduser(
         "{}/{}/{}/netuid{}/{}".format(
-            config.logging.logging_dir,  # TODO: change from ~/.bittensor/miners to ~/.bittensor/neurons
+            config.logging.logging_dir,
             config.wallet.name,
             config.wallet.hotkey,
             config.netuid,
@@ -82,7 +85,10 @@ def add_args(cls, parser):
     parser.add_argument(
         "--neuron.epoch_length",
         type=int,
-        help="The default epoch length (how often we set weights, measured in 12 second blocks).",
+        help=(
+            "The default epoch length "
+            "(how often we set weights, measured in 12 second blocks)."
+        ),
         default=100,
     )
 
@@ -135,7 +141,10 @@ def add_miner_args(cls, parser):
     parser.add_argument(
         "--neuron.name",
         type=str,
-        help="Trials for this neuron go in neuron.root / (wallet_cold - wallet_hot) / neuron.name. ",
+        help=(
+            "Trials for this neuron go in neuron.root / "
+            "(wallet_cold - wallet_hot) / neuron.name."
+        ),
         default="miner",
     )
 
@@ -149,7 +158,10 @@ def add_miner_args(cls, parser):
     parser.add_argument(
         "--blacklist.allow_non_registered",
         action="store_true",
-        help="If set, miners will accept queries from non registered entities. (Dangerous!)",
+        help=(
+            "If set, miners will accept queries from non registered entities. "
+            "(Dangerous!)"
+        ),
         default=False,
     )
 
@@ -174,7 +186,10 @@ def add_validator_args(cls, parser):
     parser.add_argument(
         "--neuron.name",
         type=str,
-        help="Trials for this neuron go in neuron.root / (wallet_cold - wallet_hot) / neuron.name. ",
+        help=(
+            "Trials for this neuron go in neuron.root / "
+            "(wallet_cold - wallet_hot) / neuron.name."
+        ),
         default="validator",
     )
 
@@ -247,7 +262,8 @@ def add_validator_args(cls, parser):
 
 def config(cls):
     """
-    Returns the configuration object specific to this miner or validator after adding relevant arguments.
+    Returns the configuration object specific to this miner or validator
+    after adding relevant arguments.
     """
     parser = argparse.ArgumentParser()
     bt.wallet.add_args(parser)

@@ -25,7 +25,7 @@ def test_mock_subtensor(netuid, n, wallet):
         )
 
     for neuron in neurons:
-        assert type(neuron) == bt.NeuronInfo
+        assert isinstance(neuron, bt.NeuronInfo)
         assert subtensor.is_hotkey_registered(netuid=netuid, hotkey_ss58=neuron.hotkey)
 
 
@@ -38,7 +38,7 @@ def test_mock_metagraph(n):
     assert len(axons) == n
     # Check ip and port
     for axon in axons:
-        assert type(axon) == bt.AxonInfo
+        assert isinstance(axon, bt.AxonInfo)
         assert axon.ip == mock_metagraph.default_ip
         assert axon.port == mock_metagraph.default_port
 
@@ -75,8 +75,8 @@ def test_mock_dendrite_timings(timeout, min_time, max_time, n):
 
     responses = asyncio.run(run())
     for synapse in responses:
-        assert (
-            hasattr(synapse, "dendrite") and type(synapse.dendrite) == bt.TerminalInfo
+        assert hasattr(synapse, "dendrite") and isinstance(
+            synapse.dendrite, bt.TerminalInfo
         )
 
         dendrite = synapse.dendrite
@@ -98,4 +98,5 @@ def test_mock_dendrite_timings(timeout, min_time, max_time, n):
             assert dendrite.status_message == "OK"
             # check that outputs are not empty for successful responses
             assert synapse.dummy_output == synapse.dummy_input * 2
-        # dont check for responses which take between timeout and max_time because they are not guaranteed to have a status code of 200 or 408
+        # dont check for responses which take between timeout and max_time because they
+        # are not guaranteed to have a status code of 200 or 408

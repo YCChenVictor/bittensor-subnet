@@ -17,7 +17,10 @@ def main(args):
     message = "<Bytes>" + f"On {timestamp} {timezone} {args.message}" + "</Bytes>"
     signature = keypair.sign(data=message)
 
-    file_contents = f"{message}\n\tSigned by: {keypair.ss58_address}\n\tSignature: {signature.hex()}"
+    file_contents = (
+        f"{message}\n\tSigned by: {keypair.ss58_address}\n\t"
+        f"Signature: {signature.hex()}"
+    )
     print(file_contents)
     open("message_and_signature.txt", "w").write(file_contents)
 
