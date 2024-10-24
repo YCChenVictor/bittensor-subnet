@@ -53,7 +53,8 @@ class MockMetagraph(bt.metagraph):
 
 class MockDendrite(bt.dendrite):
     """
-    Replaces a real bittensor network request with a mock request that just returns some static response for all axons that are passed and adds some random delay.
+    Replaces a real bittensor network request with a mock request that just returns
+    some static response for all axons that are passed and adds some random delay.
     """
 
     def __init__(self, wallet):
@@ -85,7 +86,8 @@ class MockDendrite(bt.dendrite):
                 process_time = random.random()
                 if process_time < timeout:
                     s.dendrite.process_time = str(time.time() - start_time)
-                    # Update the status code and status message of the dendrite to match the axon
+                    # Update the status code and status message of the dendrite to
+                    # match the axon
                     # TODO (developer): replace with your own expected synapse data
                     s.dummy_output = s.dummy_input * 2
                     s.dendrite.status_code = 200
@@ -117,6 +119,7 @@ class MockDendrite(bt.dendrite):
         Returns a string representation of the Dendrite object.
 
         Returns:
-            str: The string representation of the Dendrite object in the format "dendrite(<user_wallet_address>)".
+            str: The string representation of the Dendrite object in the format
+            "dendrite(<user_wallet_address>)".
         """
         return "MockDendrite({})".format(self.keypair.ss58_address)

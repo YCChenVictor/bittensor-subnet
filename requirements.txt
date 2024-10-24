@@ -10,3 +10,5 @@ pandas==2.2.3
 multi_time_series_connectedness==0.1.8
 tensorflow==2.18.0rc2
 yfinance==0.2.44
+flake8==7.1.1
+black==24.10.0
