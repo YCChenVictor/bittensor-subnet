@@ -12,3 +12,5 @@ tensorflow==2.18.0rc2
 yfinance==0.2.44
 flake8==7.1.1
 black==24.10.0
+mypy==1.13.0
+bittensor==8.2.0
