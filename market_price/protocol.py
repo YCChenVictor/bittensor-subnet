@@ -60,7 +60,7 @@ class MarketPriceSynapse(bt.Synapse):
     movement_prediction: typing.Optional[float] = None
     target_symbol: typing.Optional[str] = None
 
-    def deserialize(self) -> int:
+    def deserialize(self) -> typing.Union[dict[str, object], bool]:
         """
         Deserialize the output. This method retrieves the response from the miner in
         the form of output, deserializes it and returns it as the output of the
