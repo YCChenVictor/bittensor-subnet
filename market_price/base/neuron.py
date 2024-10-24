@@ -50,7 +50,7 @@ class BaseNeuron(ABC):
         add_args(cls, parser)
 
     @classmethod
-    def config(cls):
+    def config_function(cls):
         return config(cls)
 
     subtensor: "bt.subtensor"
@@ -63,8 +63,8 @@ class BaseNeuron(ABC):
         return ttl_get_block(self)
 
     def __init__(self, config=None):
-        base_config = copy.deepcopy(config or BaseNeuron.config())
-        self.config = self.config()
+        base_config = copy.deepcopy(config or BaseNeuron.config_function())
+        self.config = self.config_function()
         self.config.merge(base_config)
         self.check_config(self.config)
 
