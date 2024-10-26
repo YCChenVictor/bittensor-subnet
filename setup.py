@@ -28,28 +28,24 @@ from io import open
 from setuptools import setup, find_packages
 
 
-def read_requirements(path):
-    with open(path, "r") as f:
-        requirements = f.read().splitlines()
-        processed_requirements = []
-
-        for req in requirements:
-            # For git or other VCS links
-            if req.startswith("git+") or "@" in req:
-                pkg_name = re.search(r"(#egg=)([\w\-_]+)", req)
-                if pkg_name:
-                    processed_requirements.append(pkg_name.group(2))
-                else:
-                    # You may decide to raise an exception here,
-                    # if you want to ensure every VCS link has an #egg=<package_name>
-                    # at the end
-                    continue
-            else:
-                processed_requirements.append(req)
-        return processed_requirements
-
-
-requirements = read_requirements("requirements.txt")
+requirements = [
+    "starlette==0.37.2",
+    "pydantic==2.9.2",
+    "rich==13.9.2",
+    "pytest==8.3.3",
+    "torch==2.4.1",
+    "numpy==2.0.1",
+    "setuptools==70.0.0",
+    "pytest-cov==5.0.0",
+    "pandas==2.2.3",
+    "multi_time_series_connectedness==0.1.8",
+    "tensorflow==2.18.0rc2",
+    "yfinance==0.2.44",
+    "flake8==7.1.1",
+    "black==24.10.0",
+    "mypy==1.13.0",
+    "bittensor==8.2.0",
+]
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, "README.md"), encoding="utf-8") as f:

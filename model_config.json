@@ -15,5 +15,5 @@
     "train_to": 1729284960,
     "lstm_num_neurons": 50,
     "epochs": 10,
-    "lsbatch_size": 320
+    "batch_size": 320
 }
