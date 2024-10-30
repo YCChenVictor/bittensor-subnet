@@ -167,3 +167,4 @@ testing/
 # model related
 trained_model.keras
 model/docs
+graph_data.json
