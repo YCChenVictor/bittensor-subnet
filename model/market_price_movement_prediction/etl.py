@@ -14,9 +14,7 @@ class ETL:
     def load_data(self):
         names = [file.stem for file in self.csv_files]
         self.dict_data = {
-            name: pd.read_csv(file, index_col="time")[
-                ["Open", "High", "Low", "Close"]
-            ]
+            name: pd.read_csv(file, index_col="time")[["Open", "High", "Low", "Close"]]
             for name, file in zip(names, self.csv_files)
         }
 

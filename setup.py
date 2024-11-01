@@ -74,6 +74,8 @@ setup(
         "black==24.10.0",
         "mypy==1.13.0",
         "bittensor==8.2.0",
+        "pytest-asyncio==0.24.0",
+        "pytest-mock==3.14.0"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
