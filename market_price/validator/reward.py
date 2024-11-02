@@ -45,7 +45,7 @@ def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
     # The response:
     # {'movement_prediction': 0.00011253909906372428, 'target_symbol': 'AUDCAD=X'}
     if not response:
-        return -999
+        return 0
 
     movement_prediction = response["movement_prediction"]
     symbol = response["target_symbol"]
