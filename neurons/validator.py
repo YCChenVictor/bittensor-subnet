@@ -25,7 +25,7 @@ import time
 import bittensor as bt
 
 from market_price.base.validator import BaseValidatorNeuron
-from market_price.validator import forward
+from market_price.validator import execute_forward
 
 
 class Validator(BaseValidatorNeuron):
@@ -59,7 +59,7 @@ class Validator(BaseValidatorNeuron):
         - Updating the scores
         """
         # TODO(developer): Rewrite this function based on your protocol definition.
-        return await forward(self)
+        return await execute_forward(self)
 
 
 # The main function parses the configuration and runs the validator.

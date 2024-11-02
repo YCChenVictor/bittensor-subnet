@@ -29,7 +29,7 @@ from market_price.validator.reward import get_rewards
 from market_price.utils.uids import get_random_uids
 
 
-async def forward(self):
+async def execute_forward(self):
     """
     The forward function is called by the validator every time step.
 
