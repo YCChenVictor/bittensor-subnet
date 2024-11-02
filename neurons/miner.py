@@ -180,6 +180,10 @@ class Miner(BaseMinerNeuron):
         """
 
         # input when the ticker does not open market
+        if synapse.movement_prediction is None:
+            bt.logging.warning("No movement prediction (Market is closed or error)")
+            return True, "No movement prediction"
+
         # filter non-miners
 
         if synapse.dendrite is None or synapse.dendrite.hotkey is None:
