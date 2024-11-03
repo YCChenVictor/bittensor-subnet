@@ -1,7 +1,7 @@
-from .forward import forward
+from .forward import execute_forward
 from .reward import reward
 
 __all__ = [
-    "forward",
+    "execute_forward",
     "reward",
 ]
