@@ -14,14 +14,13 @@ class ETL:
     def load_data(self):
         names = [file.stem for file in self.csv_files]
         self.dict_data = {
-            name: pd.read_csv(file, index_col="time", parse_dates=["time"])[
+            name: pd.read_csv(file, index_col="time")[
                 ["Open", "High", "Low", "Close"]
             ]
             for name, file in zip(names, self.csv_files)
         }
 
     def transform_into_same_timestamp(self, timestamp_from=None, timestamp_to=None):
-        print(timestamp_from, timestamp_to)
         if not os.path.exists(self.washed_file_dir):
             os.makedirs(self.washed_file_dir)
         for name, df in self.dict_data.items():
