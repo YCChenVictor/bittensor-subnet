@@ -9,12 +9,15 @@ class ETL:
         self.raw_file_dir = Path(raw_file_dir)
         self.washed_file_dir = Path(washed_file_dir)
         self.csv_files = list(self.raw_file_dir.glob("*.csv"))
-        self.names = [file.stem for file in self.csv_files]
+        self.dict_data = None
+
+    def load_data(self):
+        names = [file.stem for file in self.csv_files]
         self.dict_data = {
             name: pd.read_csv(file, index_col="time", parse_dates=["time"])[
                 ["Open", "High", "Low", "Close"]
             ]
-            for name, file in zip(self.names, self.csv_files)
+            for name, file in zip(names, self.csv_files)
         }
 
     def transform_into_same_timestamp(self, timestamp_from=None, timestamp_to=None):
