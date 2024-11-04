@@ -21,4 +21,5 @@ asyncio.run(scrape_and_save_data(tickers, raw_train_dir))
 # Process the data
 print("modifying data")
 etl = ETL(raw_train_dir, washed_train_dir)
+etl.load_data()
 etl.transform_into_same_timestamp(train_from, train_to)
