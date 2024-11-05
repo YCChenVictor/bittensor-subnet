@@ -34,7 +34,7 @@ def smape(real, predicted):
     )
 
 
-def reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
+def execute_reward(timestamp: int, response: Dict[str, Union[float, str]]) -> float:
     """
     Reward the miner response to the dummy request. This method returns a reward
     value for the miner, which is used to update the miner's score.
@@ -83,4 +83,4 @@ def get_rewards(
     Returns:
     - np.ndarray: An array of rewards for the given query and responses.
     """
-    return np.array([reward(timestamp, response) for response in responses])
+    return np.array([execute_reward(timestamp, response) for response in responses])

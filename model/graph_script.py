@@ -12,9 +12,7 @@ if __name__ == "__main__":
     graph_dir = data["graph_dir"]
     if not os.path.exists(graph_dir):
         os.makedirs(graph_dir)
-    volatility.calculate(
-        washed_train_dir, f"{graph_dir}/volatilities.pickle"
-    )
+    volatility.calculate(washed_train_dir, f"{graph_dir}/volatilities.pickle")
     volatilities = pd.read_pickle(f"{graph_dir}/volatilities.pickle")
     conn = Connectedness(volatilities.dropna(), 5)
     conn.calculate()
