@@ -83,6 +83,7 @@ class Miner(BaseMinerNeuron):
             self.model_config["prices_predict_dir"],
             self.model_config["washed_predict_dir"],
         )
+        etl.load_data()
         etl.transform_into_same_timestamp(volatilities_from, volatilities_to)
 
         print("calculating volatilities")
