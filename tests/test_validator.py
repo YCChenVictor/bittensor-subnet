@@ -10,7 +10,9 @@ async def test_execute_forward(mocker):
     # Mock bittensor.logging.info
     mock_logging_info = mocker.patch("bittensor.logging.info")
     # Mock get_rewards (it is to mock the place calling the get_rewards, not the get_rewards itself)
-    mock_get_rewards = mocker.patch("market_price.validator.forward.get_rewards", return_value=[1, 1, 1])
+    mock_get_rewards = mocker.patch(
+        "market_price.validator.forward.get_rewards", return_value=[1, 1, 1]
+    )
 
     # Can extract all the mocks in one file
     # mock self, this self comes from BaseValidatorNeuron
@@ -37,7 +39,7 @@ async def test_execute_forward(mocker):
             {
                 "movement_prediction": 0.003,
                 "target_symbol": "symbol_3",
-            }
+            },
         ]
     )
 
