@@ -303,7 +303,7 @@ Run the subnet miner and subnet validator. Make sure to specify your subnet para
 Run the subnet miner:
 
 ```bash
-python neurons/miner.py --netuid 1 --subtensor.chain_endpoint ws://127.0.0.1:9946 --wallet.name miner --wallet.hotkey default --logging.debug --blacklist.force_validator_permit True
+python neurons/miner.py --netuid 1 --subtensor.chain_endpoint ws://127.0.0.1:9946 --wallet.name miner --wallet.hotkey default --logging.debug
 ```
 
 Run the subnet validator:
