@@ -67,7 +67,7 @@ setup(
         "setuptools==70.0.0",
         "pytest-cov==5.0.0",
         "pandas==2.2.3",
-        "multi-time-series-connectedness==0.2.1",
+        "multi-time-series-connectedness==0.2.3",
         "tensorflow==2.18.0rc2",
         "yfinance==0.2.44",
         "flake8==7.1.1",

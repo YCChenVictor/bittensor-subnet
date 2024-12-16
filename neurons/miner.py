@@ -33,6 +33,7 @@ import tensorflow as tf
 import market_price
 
 # import base miner class which takes care of most of the boilerplate
+from model.market_price_movement_prediction.data_utils import columns_to_remove
 from market_price.base.miner import BaseMinerNeuron
 from model.market_price_movement_prediction.scrape_finance_data_yahoo import (
     scrape_and_save_data,
@@ -68,7 +69,7 @@ class Miner(BaseMinerNeuron):
         asyncio.run(
             scrape_and_save_data(
                 self.model_config["train_symbols"],
-                self.model_config["prices_predict_dir"],
+                self.model_config["raw_predict_dir"],
             )
         )
 
@@ -80,7 +81,7 @@ class Miner(BaseMinerNeuron):
         )
         volatilities_to = timestamp
         etl = ETL(
-            self.model_config["prices_predict_dir"],
+            self.model_config["raw_predict_dir"],
             self.model_config["washed_predict_dir"],
         )
         etl.load_data()
@@ -103,17 +104,12 @@ class Miner(BaseMinerNeuron):
             self.model_config["max_lag"],
             periods_per_volatility,
         )
-        roll_conn.calculate(f"{predict_dir}/roll_conn.pickle")
+        roll_conn.calculate()
+        roll_conn.store(f"{predict_dir}/roll_conn.pickle")
 
         print("predict movements")
         with open(f"{predict_dir}/roll_conn.pickle", "rb") as f:
             predict_roll_conn = pd.read_pickle(f)
-        columns_to_remove = [
-            "start_at",
-            "end_at",
-            "forecast_at_next_period",
-            "forecast_at",
-        ]
         input_data = predict_roll_conn.drop(columns=columns_to_remove).values
         input_data = np.expand_dims(input_data, axis=0)
         model = tf.keras.models.load_model("trained_model.keras")
