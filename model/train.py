@@ -20,7 +20,7 @@ if not os.path.exists(train_dir):
 volatilities_filename = f"{train_dir}/volatilities.pickle"
 roll_conn_filename = f"{train_dir}/roll_conn.pickle"
 movement_filename = f"{train_dir}/movement.pickle"
-max_lag = 20
+max_lag = config["max_lag"]
 # train_from >= volatilities_from + periods_per_volatility
 periods_per_volatility = config["periods_per_volatility"]
 predict_symbol = config["predict_symbol"]
@@ -41,7 +41,8 @@ roll_conn = RollingConnectedness(
     max_lag,
     periods_per_volatility,
 )
-roll_conn.calculate(roll_conn_filename)
+roll_conn.calculate()
+roll_conn.store(roll_conn_filename)
 
 print("calculate movements")
 movement = Movement(f"{washed_train_dir}/{predict_symbol}.csv", movement_filename)

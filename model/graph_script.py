@@ -14,7 +14,7 @@ if __name__ == "__main__":
         os.makedirs(graph_dir)
     volatility.calculate(washed_train_dir, f"{graph_dir}/volatilities.pickle")
     volatilities = pd.read_pickle(f"{graph_dir}/volatilities.pickle")
-    conn = Connectedness(volatilities.dropna(), 5)
+    conn = Connectedness(volatilities.dropna(), 10)
     conn.calculate()
     conn.store_graph_data()
     conn.flatten_connectedness()
