@@ -31,8 +31,8 @@
 
         // Load data
         d3.json("graph_data.json").then(function(graph) {
-            const width = 800;
-            const height = 600;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
 
             // Set up the SVG container
             const svg = d3.select("body").append("svg")

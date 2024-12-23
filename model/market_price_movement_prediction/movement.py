@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import datetime
 import pickle
 
@@ -20,57 +21,38 @@ def date_format(date):
 
 
 class Movement:
-
-    def __init__(self, file_path, store_path):
+    def __init__(self, file_path, store_path, method):
         self.file_path = file_path
         self.store_path = store_path
-        self.movement_in_value = None
-        self.movement_in_label = None
+        self.method = method
+        self.movement = None
 
     def calculate_movement_in_value(self, dataframe):
         result = dataframe.apply(
             lambda row: row["Close"] - row["Open"], axis=1
         ).to_frame()
         result.columns = ["Movement"]  # use movement instead
-        result["Time"] = dataframe["time"]  # use time instead
+        result["time"] = dataframe["time"]  # use time instead
         return result
 
-    def calculate_movement_in_label(dataframe):
+    def calculate_movement_in_label(self, dataframe):
+        conditions = [
+            dataframe["Close"] > dataframe["Open"],
+            dataframe["Close"] == dataframe["Open"],
+            dataframe["Close"] < dataframe["Open"]
+        ]
+        choices = [1, 0, -1]
+        dataframe['Movement'] = np.select(conditions, choices, default=np.nan)
+        dataframe = dataframe[['time', 'Movement']]
+        return dataframe
 
-        # get the rownames
-        rownames = dataframe.index
-        # print(len(rownames))
-
-        # list to save index
-        index_list = []
-        for index, row in dataframe.iterrows():
-
-            Open = row["Open"]
-            Close = row["Close"]
-
-            if Close > Open:
-                movement = 1
-            else:
-                movement = 0
-
-            # list to save index
-            index_list.append(movement)
-
-        # turn the list into dataframe
-        result = pd.DataFrame(index_list)
-        result.index = rownames
-        # print(result)
-
-        # add new column of index to dataframe
-        return result
-
-    def get_movements(self, method):
+    def get_movements(self):
         df = pd.read_csv(self.file_path)
 
-        if method == "value":
-            self.movement_in_value = self.calculate_movement_in_value(df)
-        elif method == "label":
-            self.movement_in_label = self.calculate_movement_in_label(df)
+        if self.method == "value":
+            self.movement = self.calculate_movement_in_value(df)
+        elif self.method == "label":
+            self.movement = self.calculate_movement_in_label(df)
         else:
             print("The method can only be value or label")
 
@@ -107,4 +89,4 @@ class Movement:
 
     def store(self):
         with open(self.store_path, "wb") as f:
-            pickle.dump(self.movement_in_value, f)
+            pickle.dump(self.movement, f)
