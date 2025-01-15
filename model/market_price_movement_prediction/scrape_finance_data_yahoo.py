@@ -17,7 +17,7 @@ def get_historical_price_with_yfinace(symbol):
         if symbol is None:
             sys.exit()
         ticker = yf.Ticker(symbol)
-        historical_prices = ticker.history(period="1d", interval="1m")
+        historical_prices = ticker.history(period="max", interval="1m")
         historical_price_data = [
             {
                 **{"time": get_unix_timestamp(index), "symbol": symbol},

@@ -65,7 +65,7 @@ An example of the visualization:
   ```
   * `train_symbols`: the symbols to calculate rolling connectedness by minute. As current mechanism calculates rolling by minute, it naturally requires overlaps of these market timezones.
   * `past_roll_conn_period`: how many past period of connectedness for you to make one period of training or prediction.
-  * `max_lag`: the max lag to do the statistics estimation.
+  * `max_lag`: the max lag to do the statistics estimation. Should you meet math domain issue, try to increase the number of lag to let it have enough data to do estimation.
   * `periods_per_volatility`: how many past periods of volatility to estimate a connectedness
   * `train_from` & `train_to`: the periods of timeseries data that you want to train the model
   * Other directory variables are the structure to store the required scraped washed data
